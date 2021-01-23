@@ -16,40 +16,55 @@ def bresenham(start, end):
 
     x1, y1 = start
     x2, y2 = end
-    dx = x2 - x1
-    dy = y2 - y1
+    x, y = x1, y1
 
-    is_steep = abs(dy) > abs(dx)
+    if x1 < x2:
+        xi = 1
+        dx = x2 - x1
+    else:
+        xi = -1
+        dx = x1 - x2
 
-    if is_steep:
-        x1, y1 = y1, x1
-        x2, y2 = y2, x2
+    if y1 < y2:
+        yi = 1
+        dy = y2 - y1
+    else:
+        yi = -1
+        dy = y1 - y2
 
-    swapped = False
-    if x1 > x2:
-        x1, x2 = x2, x1
-        y1, y2 = y2, y1
-        swapped = True
+    yield x, y
 
-    dx = x2 - x1
-    dy = y2 - y1
+    if dx > dy:
+        ai = (dy - dx) * 2
+        bi = dy * 2
+        d = bi - dx
 
-    error = int(dx / 2.0)
-    ystep = 1 if y1 < y2 else -1
+        while x != x2:
+            if d >= 0:
+                x += xi
+                y += yi
+                d += ai
+            else:
+                d += bi
+                x += xi
 
-    y = y1
-    points = []
-    for x in range(x1, x2 + 1):
-        coord = (y, x) if is_steep else (x, y)
-        points.append(coord)
-        error -= abs(dy)
-        if error < 0:
-            y += ystep
-            error += dx
+            yield x, y
 
-    if swapped:
-        points.reverse()
-    return points
+    else:
+        ai = (dx - dy) * 2
+        bi = dx * 2
+        d = bi - dy
+
+        while y != y2:
+            if d >= 0:
+                x += xi
+                y += yi
+                d += ai
+            else:
+                d += bi
+                y += yi
+
+            yield x, y
 
 
 def draw_line(start, end):
